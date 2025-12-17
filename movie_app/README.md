@@ -7,7 +7,7 @@
 1. Клонируйте и установите
 
 bash
-git clone https://github.com/ZubenkoJuliya/semestrovaya2
+git clone hhttps://github.com/ZubenkoJuliya/semestrovaya2  
 cd moviebase
 
 ```bash
@@ -110,7 +110,7 @@ movie_app/
 🌐 REST API (полностью готово!)  
 
 ```text
-/api/v1/movies/                - Все фильмы (GET, POST)
+/api/v1/movies/                 - Все фильмы (GET, POST)
 /api/v1/movies/{id}            - Конкретный фильм (GET, PUT, DELETE)
 /api/v1/movies/{id}/reviews/   - Отзывы к фильму (GET, POST)
 /api/v1/reviews/{id}           - Отзыв (GET, DELETE)
@@ -167,7 +167,7 @@ API: Flask-RESTful
 Войти: /login  
 Зарегистрироваться: /register  
 Профиль: /profile   
-Избранное: /favorite  
+Избранное: /favorites  
 GitHub: https://github.com/ZubenkoJuliya/semestrovaya2  
 
- ⭐ Нравится проект? Поставьте звезду на GitHub!
+# ⭐ Нравится проект? Поставьте звезду на GitHub!
