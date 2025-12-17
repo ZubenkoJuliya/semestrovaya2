@@ -31,7 +31,7 @@ python app.py
 📁 Полная структура проекта
 
 ```text
-moviebase/
+movie_app/
 │
 ├── app.py                      # Основное приложение (все маршруты)
 ├── models.py                   # Модели: User, Movie, Review, связи
@@ -43,20 +43,15 @@ moviebase/
 │   ├── index.html             # Главная страница
 │   ├── login.html             # Страница входа
 │   ├── register.html          # Страница регистрации
-│   ├── movie_list.html        # Список всех фильмов
 │   ├── movie_detail.html      # Детальная страница фильма
+│   ├── movie_list.html        # Главная каталоговая страница
 │   ├── movie_add.html         # Форма добавления фильма
 │   ├── favorites.html         # Избранные фильмы пользователя
-│   ├── profile.html           # Профиль пользователя
-│   └── admin/
-│       └── users.html         # Управление пользователями
+│   └── profile.html           # Профиль пользователя
 │
 ├── static/                     # Статические файлы
-│   ├── css/
-│   │   └── style.css          # Стили Bootstrap + кастомные
-│   ├── js/
-│   │   └── main.js            # JavaScript для интерактива
-│   └── images/                # Постеры фильмов
+│   └── css/
+│       └── style.css          # Стили Bootstrap + кастомные
 │
 ├── instance/                   # Папка для экземпляра приложения
 │   └── movies.db              # База данных SQLite
