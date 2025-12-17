@@ -167,7 +167,7 @@ API: Flask-RESTful
 Войти: /login  
 Зарегистрироваться: /register  
 Профиль: /profile   
-Избранное: /favorites  
+Избранное: /favorite  
 GitHub: [ссылка на репозиторий]  
 
 # ⭐ Нравится проект? Поставьте звезду на GitHub!
