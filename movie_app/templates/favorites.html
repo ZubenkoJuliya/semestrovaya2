@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Избранное - Кинотеатр{% endblock %}
+
+{% block content %}
+<h1>⭐ Мои избранные фильмы</h1>
+
+{% if favorite_movies.items %}
+<p class="favorites-count">Всего избранных фильмов: {{ favorite_movies.total }}</p>
+
+<div class="movies-grid">
+    {% for movie in favorite_movies.items %}
+    <div class="movie-card">
+        <div class="movie-actions">
+            <form action="{{ url_for('toggle_favorite', movie_id=movie.id) }}" method="POST" class="favorite-form">
+                <button type="submit" class="favorite-btn favorite-active" title="Удалить из избранного">
+                    ★
+                </button>
+            </form>
+        </div>
+        <div class="movie-rating">★ {{ "%.1f"|format(movie.rating) }}</div>
+        <h3><a href="{{ url_for('movie_detail', movie_id=movie.id) }}">{{ movie.title }}</a></h3>
+        <p class="movie-year">{{ movie.year }}</p>
+        <p class="movie-director">{{ movie.director or 'Режиссер не указан' }}</p>
+        <p class="movie-genre">{{ movie.genre or 'Жанр не указан' }}</p>
+        <div class="movie-stats">
+            <small>💬 {{ movie.reviews.count() }}</small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if favorite_movies.pages > 1 %}
+<div class="pagination">
+    {% if favorite_movies.has_prev %}
+    <a href="{{ url_for('favorites', page=favorite_movies.prev_num) }}" class="page-link">← Назад</a>
+    {% endif %}
+
+    <span class="page-info">Страница {{ favorite_movies.page }} из {{ favorite_movies.pages }}</span>
+
+    {% if favorite_movies.has_next %}
+    <a href="{{ url_for('favorites', page=favorite_movies.next_num) }}" class="page-link">Вперед →</a>
+    {% endif %}
+</div>
+{% endif %}
+{% else %}
+<div class="empty-favorites">
+    <div class="empty-icon">⭐</div>
+    <h3>У вас пока нет избранных фильмов</h3>
+    <p>Найдите интересные фильмы и добавьте их в избранное!</p>
+    <div class="empty-actions">
+        <a href="{{ url_for('movie_list') }}" class="btn btn-primary">Найти фильмы</a>
+        <a href="{{ url_for('index') }}" class="btn">На главную</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

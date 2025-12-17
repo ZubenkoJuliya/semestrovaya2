@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}{{ movie.title }} - Кинотеатр{% endblock %}
+
+{% block content %}
+<div class="movie-detail">
+    <div class="movie-header">
+        <div class="movie-title-section">
+            <h1>{{ movie.title }} <span class="year">({{ movie.year }})</span></h1>
+
+            <div class="movie-meta">
+                <span class="rating">★ {{ "%.1f"|format(movie.rating) }}</span>
+                <span class="genre">{{ movie.genre or 'Жанр не указан' }}</span>
+                <span class="director">{{ movie.director or 'Режиссер не указан' }}</span>
+                <span class="favorite-count">⭐ {{ movie.favorited_by.count() }}</span>
+            </div>
+        </div>
+
+        <div class="movie-actions">
+            {% if current_user.is_authenticated %}
+            <form action="{{ url_for('toggle_favorite', movie_id=movie.id) }}" method="POST" class="favorite-form">
+                <button type="submit" class="favorite-btn">
+                    ☆ Добавить в избранное
+                </button>
+            </form>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn">🔒 Войдите, чтобы добавить в избранное</a>
+            {% endif %}
+
+            {% if current_user.is_admin %}
+            <div class="admin-actions">
+                <a href="{{ url_for('edit_movie', movie_id=movie.id) }}" class="btn btn-secondary">Редактировать
+                    фильм</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="movie-content">
+        <div class="movie-description">
+            <h3>Описание</h3>
+            <p>{{ movie.description or 'Описание отсутствует' }}</p>
+        </div>
+
+        <div class="reviews-section">
+            <h3>Отзывы ({{ reviews|length }})</h3>
+
+            <!-- Форма добавления отзыва - только для авторизованных -->
+            {% if current_user.is_authenticated %}
+            <div class="add-review">
+                <h4>Добавить отзыв</h4>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.rating.label }}
+                        {{ form.rating(class="form-control") }}
+                        {% if form.rating.errors %}
+                        <div class="errors">
+                            {% for error in form.rating.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.content.label }}
+                        {{ form.content(class="form-control", rows=4, placeholder="Напишите ваш отзыв здесь...") }}
+                        {% if form.content.errors %}
+                        <div class="errors">
+                            {% for error in form.content.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {{ form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+            {% else %}
+            <div class="login-prompt">
+                <p>📝 <a href="{{ url_for('login') }}">Войдите</a>, чтобы оставить свой отзыв</p>
+                <p>👀 Вы можете просматривать отзывы других пользователей ниже</p>
+            </div>
+            {% endif %}
+
+            <!-- Список отзывов - видят ВСЕ -->
+            <div class="reviews-list">
+                {% if reviews %}
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <strong>{{ review.user.username }}</strong>
+                        <span class="review-rating">★ {{ review.rating }}/5</span>
+                        <span class="review-date">{{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    <p class="review-content">{{ review.content }}</p>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="no-reviews">
+                    <p>😔 Пока нет отзывов на этот фильм.</p>
+                    {% if not current_user.is_authenticated %}
+                    <p><a href="{{ url_for('login') }}">Войдите</a> и будьте первым!</p>
+                    {% else %}
+                    <p>Будьте первым, кто оставит отзыв!</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

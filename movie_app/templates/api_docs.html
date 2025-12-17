@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}API Документация - Кинотек{% endblock %}
+
+{% block content %}
+<h1>API Документация</h1>
+
+<div class="api-section">
+    <h2>Базовый URL</h2>
+    <p><code>http://ваш-домен/api/v1/</code></p>
+</div>
+
+<div class="api-section">
+    <h2>Фильмы</h2>
+
+    <h3>Получить все фильмы</h3>
+    <div class="api-endpoint">
+        <span class="method get">GET</span>
+        <code>/movies/</code>
+    </div>
+    <p>Пример ответа:</p>
+    <pre><code>[
+    {
+        "id": 1,
+        "title": "Интерстеллар",
+        "year": 2014,
+        "director": "Кристофер Нолан",
+        "rating": 4.8
+    }
+]</code></pre>
+
+    <h3>Получить фильм по ID</h3>
+    <div class="api-endpoint">
+        <span class="method get">GET</span>
+        <code>/movies/&lt;id&gt;</code>
+    </div>
+
+    <h3>Создать фильм (только админ)</h3>
+    <div class="api-endpoint">
+        <span class="method post">POST</span>
+        <code>/movies/</code>
+    </div>
+    <p>Тело запроса (JSON):</p>
+    <pre><code>{
+    "title": "Название фильма",
+    "year": 2024,
+    "director": "Режиссер",
+    "description": "Описание",
+    "genre": "Жанр"
+}</code></pre>
+
+    <h3>Обновить фильм (только админ)</h3>
+    <div class="api-endpoint">
+        <span class="method put">PUT</span>
+        <code>/movies/&lt;id&gt;</code>
+    </div>
+
+    <h3>Удалить фильм (только админ)</h3>
+    <div class="api-endpoint">
+        <span class="method delete">DELETE</span>
+        <code>/movies/&lt;id&gt;</code>
+    </div>
+</div>
+
+<div class="api-section">
+    <h2>Отзывы</h2>
+
+    <h3>Получить отзывы к фильму</h3>
+    <div class="api-endpoint">
+        <span class="method get">GET</span>
+        <code>/movies/&lt;movie_id&gt;/reviews/</code>
+    </div>
+
+    <h3>Добавить отзыв</h3>
+    <div class="api-endpoint">
+        <span class="method post">POST</span>
+        <code>/movies/&lt;movie_id&gt;/reviews/</code>
+    </div>
+    <p>Требуется авторизация. Тело запроса:</p>
+    <pre><code>{
+    "content": "Текст отзыва",
+    "rating": 5
+}</code></pre>
+
+    <h3>Получить отзыв по ID</h3>
+    <div class="api-endpoint">
+        <span class="method get">GET</span>
+        <code>/reviews/&lt;review_id&gt;</code>
+    </div>
+
+    <h3>Удалить отзыв (автор или админ)</h3>
+    <div class="api-endpoint">
+        <span class="method delete">DELETE</span>
+        <code>/reviews/&lt;review_id&gt;</code>
+    </div>
+</div>
+
+<div class="api-section">
+    <h2>Пользователи</h2>
+
+    <h3>Получить список пользователей (только админ)</h3>
+    <div class="api-endpoint">
+        <span class="method get">GET</span>
+        <code>/users/</code>
+    </div>
+
+    <h3>Получить пользователя по ID</h3>
+    <div class="api-endpoint">
+        <span class="method get">GET</span>
+        <code>/users/&lt;user_id&gt;</code>
+    </div>
+</div>
+
+<div class="api-section">
+    <h2>Пример использования с curl</h2>
+    <pre><code># Получить все фильмы
+curl http://localhost:5000/api/v1/movies/
+
+# Добавить отзыв (с авторизацией)
+curl -X POST http://localhost:5000/api/v1/movies/1/reviews/ \
+  -H "Content-Type: application/json" \
+  -H "Cookie: session=ваша_сессия" \
+  -d '{"content": "Отличный фильм!", "rating": 5}'</code></pre>
+</div>
+
+<style>
+    .api-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .api-endpoint {
+        background: #f5f5f5;
+        padding: 0.5rem;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .method {
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-weight: bold;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .method.get {
+        background: #61affe;
+        color: white;
+    }
+
+    .method.post {
+        background: #49cc90;
+        color: white;
+    }
+
+    .method.put {
+        background: #fca130;
+        color: white;
+    }
+
+    .method.delete {
+        background: #f93e3e;
+        color: white;
+    }
+
+    pre {
+        background: #f5f5f5;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+
+    code {
+        font-family: 'Courier New', monospace;
+    }
+</style>
+{% endblock %}

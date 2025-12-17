@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Кинотеатр{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Добро пожаловать в Кинотеатр!</h1>
+    <p>Откройте для себя лучшие фильмы всех времен</p>
+</div>
+
+{% if current_user.is_admin %}
+<div class="admin-stats">
+    <h2>📊 Статистика (только для админа)</h2>
+    <div class="stats">
+        <div class="stat-card">
+            <h3>{{ movie_count }}</h3>
+            <p>Фильмов в базе</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ user_count }}</h3>
+            <p>Пользователей</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ review_count }}</h3>
+            <p>Отзывов</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<h2>🔥 Топ фильмов</h2>
+<div class="movies-grid">
+    {% for movie in top_movies %}
+    <div class="movie-card">
+        {% if current_user.is_authenticated %}
+        <div class="movie-actions">
+            <form action="{{ url_for('toggle_favorite', movie_id=movie.id) }}" method="POST" class="favorite-form">
+                <button type="submit" class="favorite-btn" title="Добавить в избранное">
+                    ☆
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        <div class="movie-rating">★ {{ "%.1f"|format(movie.rating) }}</div>
+        <h3><a href="{{ url_for('movie_detail', movie_id=movie.id) }}">{{ movie.title }}</a></h3>
+        <p class="movie-year">{{ movie.year }}</p>
+        <p class="movie-director">{{ movie.director or 'Режиссер не указан' }}</p>
+        <p class="movie-genre">{{ movie.genre or 'Жанр не указан' }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<h2>🎬 Новые добавления</h2>
+<div class="movies-grid">
+    {% for movie in new_movies %}
+    <div class="movie-card">
+        {% if current_user.is_authenticated %}
+        <div class="movie-actions">
+            <form action="{{ url_for('toggle_favorite', movie_id=movie.id) }}" method="POST" class="favorite-form">
+                <button type="submit" class="favorite-btn" title="Добавить в избранное">
+                    ☆
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        <div class="movie-rating">★ {{ "%.1f"|format(movie.rating) }}</div>
+        <h3><a href="{{ url_for('movie_detail', movie_id=movie.id) }}">{{ movie.title }}</a></h3>
+        <p class="movie-year">{{ movie.year }}</p>
+        <p class="movie-director">{{ movie.director or 'Режиссер не указан' }}</p>
+        <p class="movie-genre">{{ movie.genre or 'Жанр не указан' }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

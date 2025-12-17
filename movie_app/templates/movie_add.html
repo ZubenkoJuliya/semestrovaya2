@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{% if movie %}Редактировать фильм{% else %}Добавить фильм{% endif %} - Кинотеатр{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>{% if movie %}Редактировать фильм{% else %}Добавить новый фильм{% endif %}</h1>
+
+    <form method="POST" class="movie-form">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-control", placeholder="Введите название фильма") }}
+            {% if form.title.errors %}
+            {% for error in form.title.errors %}
+            <span class="error">{{ error }}</span>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                {{ form.year.label }}
+                {{ form.year(class="form-control", placeholder="Год выпуска") }}
+                {% if form.year.errors %}
+                {% for error in form.year.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.genre.label }}
+                {{ form.genre(class="form-control", placeholder="Жанр") }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.director.label }}
+            {{ form.director(class="form-control", placeholder="Режиссер") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control", rows=5, placeholder="Описание фильма") }}
+        </div>
+
+        <div class="form-actions">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{% if movie %}{{ url_for('movie_detail', movie_id=movie.id) }}{% else %}{{ url_for('movie_list') }}{% endif %}"
+               class="btn">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

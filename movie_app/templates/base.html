@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Кинотеатр{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <a class="logo" href="{{ url_for('index') }}">🎬 Кинотеатр</a>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Главная</a>
+            <a href="{{ url_for('movie_list') }}">Фильмы</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('favorites') }}">⭐ Избранное</a>
+            {% if current_user.is_admin %}
+            <div class="admin-dropdown">
+                <a href="#" class="admin-toggle">👑 Админ</a>
+                <div class="admin-menu">
+                    <a href="{{ url_for('admin_users') }}">👥 Пользователи</a>
+                    <a href="{{ url_for('add_movie') }}">➕ Добавить фильм</a>
+                </div>
+            </div>
+            {% endif %}
+            <a href="{{ url_for('profile') }}">{{ current_user.username }}</a>
+            <a href="{{ url_for('logout') }}">Выйти</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Войти</a>
+            <a href="{{ url_for('register') }}">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</div>
+
+<footer>
+    <div class="container">
+        <p>© 2025 Кинотеатр. Все права защищены.</p>
+        <p>API доступно по адресу: <code>/api/v1/</code></p>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователи - Админ-панель{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>👥 Управление пользователями</h1>
+        <a href="{{ url_for('index') }}" class="btn">← На главную</a>
+    </div>
+
+    <div class="admin-stats">
+        <div class="stats">
+            <div class="stat-card">
+                <h3>{{ users|length }}</h3>
+                <p>Всего пользователей</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ admin_count }}</h3>
+                <p>Администраторов</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ regular_count }}</h3>
+                <p>Обычных пользователей</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="users-table-container">
+        <table class="users-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя пользователя</th>
+                <th>Email</th>
+                <th>Роль</th>
+                <th>Дата регистрации</th>
+                <th>Отзывов</th>
+                <th>Избранных</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>
+                    <strong>{{ user.username }}</strong>
+                    {% if user.id == current_user.id %}
+                    <span class="badge badge-you">Вы</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.email or 'Не указан' }}</td>
+                <td>
+                    {% if user.is_admin %}
+                    <span class="badge badge-admin">Админ</span>
+                    {% else %}
+                    <span class="badge badge-user">Пользователь</span>
+                    {% endif %}
+                </td>
+                <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                <td>{{ user.reviews.count() }}</td>
+                <td>{{ user.favorite_movies.count() }}</td>
+                <td class="actions">
+                    {% if user.id != current_user.id %}
+                    <button class="btn-action" title="Просмотреть профиль">👁️</button>
+                    <button class="btn-action" title="Написать сообщение">✉️</button>
+                    {% if not user.is_admin %}
+                    <form action="{{ url_for('make_admin', user_id=user.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn-action btn-make-admin" title="Сделать админом"
+                                onclick="return confirm('Сделать {{ user.username }} администратором?')">
+                            👑
+                        </button>
+                    </form>
+                    {% else %}
+                    <form action="{{ url_for('remove_admin', user_id=user.id) }}" method="POST"
+                          style="display: inline;">
+                        <button type="submit" class="btn-action btn-remove-admin" title="Убрать права админа"
+                                onclick="return confirm('Убрать права администратора у {{ user.username }}?')">
+                            👥
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% else %}
+                    <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-notes">
+        <h3>💡 Примечания:</h3>
+        <ul>
+            <li>Только администраторы могут просматривать эту страницу</li>
+            <li>Вы не можете редактировать свой собственный статус</li>
+            <li>Будьте осторожны при назначении прав администратора</li>
+            <li>Все действия логируются в системе</li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

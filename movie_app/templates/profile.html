@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль - Кинотеатр{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>Ваш профиль</h1>
+        <div class="profile-actions">
+            <a href="{{ url_for('favorites') }}" class="btn btn-primary">⭐ Мои избранные ({{ favorite_count }})</a>
+        </div>
+    </div>
+
+    <div class="profile-info">
+        <div class="info-card">
+            <h3>Основная информация</h3>
+            <div class="info-item">
+                <strong>Имя пользователя:</strong>
+                <span>{{ current_user.username }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Email:</strong>
+                <span>{{ current_user.email or 'Не указан' }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Дата регистрации:</strong>
+                <span>{{ current_user.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Статус:</strong>
+                <span class="badge {% if current_user.is_admin %}badge-admin{% else %}badge-user{% endif %}">
+                    {% if current_user.is_admin %}Администратор{% else %}Пользователь{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <h3>Статистика</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">{{ favorite_count }}</div>
+                    <div class="stat-label">Избранных фильмов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ reviews|length }}</div>
+                    <div class="stat-label">Оставлено отзывов</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reviews-section">
+        <h2>Ваши последние отзывы</h2>
+
+        {% if reviews %}
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <strong>Фильм: <a href="{{ url_for('movie_detail', movie_id=review.movie.id) }}">{{
+                        review.movie.title }}</a></strong>
+                    <span class="review-rating">★ {{ review.rating }}</span>
+                    <span class="review-date">{{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                </div>
+                <p class="review-content">{{ review.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if reviews|length >= 10 %}
+        <div class="more-reviews">
+            <a href="#" class="btn">Показать все отзывы</a>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="no-reviews">
+            <p>Вы еще не оставляли отзывов.</p>
+            <a href="{{ url_for('movie_list') }}" class="btn">Найти фильмы для отзыва</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

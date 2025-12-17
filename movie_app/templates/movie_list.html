@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Все фильмы - Кинотеатр{% endblock %}
+
+{% block content %}
+<h1>Все фильмы</h1>
+
+<div class="filters">
+    <form method="GET" class="filter-form">
+        <div class="filter-group">
+            <input type="text" name="search" placeholder="Поиск по названию..."
+                   value="{{ request.args.get('search', '') }}" class="search-input">
+        </div>
+        <div class="filter-group">
+            <select name="genre" class="genre-select">
+                <option value="">Все жанры</option>
+                {% for genre in genres %}
+                <option value="{{ genre }}" {% if request.args.get(
+                'genre') == genre %}selected{% endif %}>
+                {{ genre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Найти</button>
+        <a href="{{ url_for('movie_list') }}" class="btn">Сбросить</a>
+    </form>
+</div>
+
+{% if current_user.is_admin %}
+<div class="admin-actions" style="margin-bottom: 20px;">
+    <a href="{{ url_for('add_movie') }}" class="btn">➕ Добавить новый фильм</a>
+</div>
+{% endif %}
+
+{% if movies.items %}
+<div class="movies-grid">
+    {% for movie in movies.items %}
+    <div class="movie-card">
+        {% if current_user.is_authenticated %}
+        <div class="movie-actions">
+            <form action="{{ url_for('toggle_favorite', movie_id=movie.id) }}" method="POST" class="favorite-form">
+                <button type="submit" class="favorite-btn" title="Добавить в избранное">
+                    ☆
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        <div class="movie-rating">★ {{ "%.1f"|format(movie.rating) }}</div>
+        <h3><a href="{{ url_for('movie_detail', movie_id=movie.id) }}">{{ movie.title }}</a></h3>
+        <p class="movie-year">{{ movie.year }}</p>
+        <p class="movie-director">{{ movie.director or 'Режиссер не указан' }}</p>
+        <p class="movie-genre">{{ movie.genre or 'Жанр не указан' }}</p>
+        <div class="movie-stats">
+            <small>💬 {{ movie.reviews.count() }}</small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if movies.has_prev %}
+    <a href="{{ url_for('movie_list', page=movies.prev_num, search=request.args.get('search'), genre=request.args.get('genre')) }}"
+       class="page-link">← Назад</a>
+    {% endif %}
+
+    <span class="page-info">Страница {{ movies.page }} из {{ movies.pages }}</span>
+
+    {% if movies.has_next %}
+    <a href="{{ url_for('movie_list', page=movies.next_num, search=request.args.get('search'), genre=request.args.get('genre')) }}"
+       class="page-link">Вперед →</a>
+    {% endif %}
+</div>
+{% else %}
+<div class="no-results">
+    <p>Фильмы не найдены.</p>
+    {% if request.args.get('search') or request.args.get('genre') %}
+    <a href="{{ url_for('movie_list') }}" class="btn">Показать все фильмы</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
