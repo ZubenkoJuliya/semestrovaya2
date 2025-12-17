@@ -170,4 +170,4 @@ API: Flask-RESTful
 Избранное: /favorite  
 GitHub: https://github.com/ZubenkoJuliya/semestrovaya2  
 
-# ⭐ Нравится проект? Поставьте звезду на GitHub!
+ ⭐ Нравится проект? Поставьте звезду на GitHub!
