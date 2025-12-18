@@ -37,8 +37,9 @@ movie_app/
 ├── models.py                   # Модели: User, Movie, Review, связи
 ├── config.py                   # Конфигурация приложения
 ├── requirements.txt            # Зависимости: Flask, SQLAlchemy и др.
+├── test_api.py                 # Тесты
 │
-├── templates/                  # HTML шаблоны
+├── templates/                 # HTML шаблоны
 │   ├── base.html              # Основной шаблон с навигацией
 │   ├── index.html             # Главная страница
 │   ├── login.html             # Страница входа
@@ -47,7 +48,9 @@ movie_app/
 │   ├── movie_list.html        # Главная каталоговая страница
 │   ├── movie_add.html         # Форма добавления фильма
 │   ├── favorites.html         # Избранные фильмы пользователя
-│   └── profile.html           # Профиль пользователя
+│   ├── profile.html           # Профиль пользователя
+│   └── admin                  # Шаблон для админа
+│    └── users.html            # Просмотре пользователей
 │
 ├── static/                     # Статические файлы
 │   └── css/

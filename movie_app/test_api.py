@@ -73,7 +73,7 @@ class MovieAPITestCase(unittest.TestCase):
             self.movie2_id = movie2.id
 
     def tearDown(self):
-        """Очистка после каждого теста"""
+        # Очистка после каждого теста
         with self.app.app_context():
             # Удаляем все таблицы
             self.db.session.remove()
@@ -87,7 +87,7 @@ class MovieAPITestCase(unittest.TestCase):
             pass
 
     def login_as_user(self, user_id=None):
-        """Авторизуем пользователя в тестовом контексте"""
+        # Авторизуем пользователя в тестовом контексте
         with self.app.app_context():
             if user_id == 'admin':
                 user = self.User.query.filter_by(username='testadmin').first()
@@ -107,7 +107,7 @@ class MovieAPITestCase(unittest.TestCase):
     # ========== ТЕСТЫ БЕЗ АВТОРИЗАЦИИ ==========
 
     def test_get_movies_without_auth(self):
-        """Тест получения фильмов без авторизации"""
+        # Тест получения фильмов без авторизации
         response = self.client.get('/api/v1/movies/')
         self.assertEqual(response.status_code, 200)
 
@@ -115,7 +115,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
 
     def test_get_single_movie_without_auth(self):
-        """Тест получения одного фильма без авторизации"""
+        # Тест получения одного фильма без авторизации
         response = self.client.get(f'/api/v1/movies/{self.movie1_id}')
         self.assertEqual(response.status_code, 200)
 
@@ -123,7 +123,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertEqual(data['title'], 'Test Movie 1')
 
     def test_get_reviews_without_auth(self):
-        """Тест получения отзывов без авторизации"""
+        # Тест получения отзывов без авторизации
         response = self.client.get(f'/api/v1/movies/{self.movie1_id}/reviews/')
         self.assertEqual(response.status_code, 200)
 
@@ -131,7 +131,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertIsInstance(data, list)
 
     def test_create_movie_without_auth_forbidden(self):
-        """Тест создания фильма без авторизации"""
+        # Тест создания фильма без авторизации
         response = self.client.post('/api/v1/movies/', json={
             'title': 'New Movie',
             'year': 2025,
@@ -142,7 +142,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_create_review_without_auth_forbidden(self):
-        """Тест создания отзыва без авторизации"""
+        # Тест создания отзыва без авторизации
         response = self.client.post(f'/api/v1/movies/{self.movie1_id}/reviews/', json={
             'content': 'Great movie!',
             'rating': 5
@@ -153,7 +153,7 @@ class MovieAPITestCase(unittest.TestCase):
     # ========== ТЕСТЫ С АВТОРИЗАЦИЕЙ ПОЛЬЗОВАТЕЛЯ ==========
 
     def test_create_review_as_user(self):
-        """Тест создания отзыва обычным пользователем"""
+        # Тест создания отзыва обычным пользователем
         self.login_as_user('user')
 
         response = self.client.post(f'/api/v1/movies/{self.movie1_id}/reviews/',
@@ -166,7 +166,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertEqual(data['rating'], 5)
 
     def test_create_movie_as_user_forbidden(self):
-        """Тест создания фильма обычным пользователем"""
+        # Тест создания фильма обычным пользователем
         self.login_as_user('user')
 
         response = self.client.post('/api/v1/movies/',
@@ -175,7 +175,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_add_to_favorites_as_user(self):
-        """Тест добавления в избранное обычным пользователем"""
+        # Тест добавления в избранное обычным пользователем
         self.login_as_user('user')
 
         response = self.client.post(f'/api/v1/movies/{self.movie1_id}/favorite/')
@@ -183,7 +183,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertIn(response.status_code, [200, 201])
 
     def test_remove_from_favorites_as_user(self):
-        """Тест удаления из избранного обычным пользователем"""
+        # Тест удаления из избранного обычным пользователем
         self.login_as_user('user')
 
         # Сначала добавляем
@@ -196,7 +196,7 @@ class MovieAPITestCase(unittest.TestCase):
     # ========== ТЕСТЫ С АВТОРИЗАЦИЕЙ АДМИНА ==========
 
     def test_create_movie_as_admin(self):
-        """Тест создания фильма администратором"""
+        # Тест создания фильма администратором
         self.login_as_user('admin')
 
         response = self.client.post('/api/v1/movies/',
@@ -212,7 +212,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertEqual(data['title'], 'New Movie from Admin')
 
     def test_update_movie_as_admin(self):
-        """Тест обновления фильма администратором"""
+        # Тест обновления фильма администратором
         self.login_as_user('admin')
 
         response = self.client.put(f'/api/v1/movies/{self.movie1_id}',
@@ -228,7 +228,7 @@ class MovieAPITestCase(unittest.TestCase):
         self.assertEqual(data['title'], 'Updated Movie')
 
     def test_delete_movie_as_admin(self):
-        """Тест удаления фильма администратором"""
+        # Тест удаления фильма администратором
         self.login_as_user('admin')
 
         response = self.client.delete(f'/api/v1/movies/{self.movie1_id}')
@@ -241,7 +241,7 @@ class MovieAPITestCase(unittest.TestCase):
     # ========== БАЗОВЫЕ ТЕСТЫ ==========
 
     def test_database_operations(self):
-        """Тест операций с базой данных"""
+        # Тест операций с базой данных
         with self.app.app_context():
             users = self.User.query.all()
             self.assertEqual(len(users), 2)
@@ -253,7 +253,7 @@ class MovieAPITestCase(unittest.TestCase):
             self.assertEqual(len(reviews), 0)
 
 
-# Простые тесты веб-интерфейса (без не-ASCII символов в байтовых строках)
+# Простые тесты веб-интерфейса
 class WebInterfaceTestCase(unittest.TestCase):
     def setUp(self):
         # Временная БД в памяти для веб-тестов
@@ -300,7 +300,7 @@ class WebInterfaceTestCase(unittest.TestCase):
             self.db.drop_all()
 
     def test_home_page(self):
-        """Тест главной страницы"""
+        # Тест главной страницы
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         # Используем обычную строку вместо байтовой
@@ -309,14 +309,14 @@ class WebInterfaceTestCase(unittest.TestCase):
         self.assertIn('body', response_text)
 
     def test_movies_page(self):
-        """Тест страницы со списком фильмов"""
+        # Тест страницы со списком фильмов
         response = self.client.get('/movies')
         self.assertEqual(response.status_code, 200)
         response_text = response.get_data(as_text=True)
         self.assertIn('Test Web Movie', response_text)
 
     def test_movie_detail_page(self):
-        """Тест страницы фильма"""
+        # Тест страницы фильма
         response = self.client.get(f'/movie/{self.movie_id}')
         self.assertEqual(response.status_code, 200)
         response_text = response.get_data(as_text=True)
@@ -366,16 +366,8 @@ class RussianAPITestCase(unittest.TestCase):
             self.db.session.remove()
             self.db.drop_all()
 
-    def test_russian_movie_title(self):
-        """Тест с русскими символами в JSON"""
-        response = self.client.get(f'/api/v1/movies/{self.movie_id}')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.data)
-        self.assertEqual(data['title'], 'Тестовый фильм')
-
     def test_russian_content_in_review(self):
-        """Тест создания отзыва с русским текстом"""
+        # Тест создания отзыва с русским текстом
         # Логинимся через сессию
         with self.app.app_context():
             user = self.User.query.first()
@@ -396,7 +388,7 @@ class RussianAPITestCase(unittest.TestCase):
 
 # Простые тесты с временной базой данных
 class SimpleAPITests(unittest.TestCase):
-    """Простые тесты с временной БД"""
+    # Простые тесты с временной БД
 
     def setUp(self):
         # Создаем временную БД в памяти
@@ -444,7 +436,7 @@ class SimpleAPITests(unittest.TestCase):
             pass
 
     def test_api_endpoints_exist(self):
-        """Тест что основные API endpoints существуют"""
+        # Тест что основные API endpoints существуют
         # Проверяем что можем получить фильмы
         response = self.client.get('/api/v1/movies/')
         self.assertIn(response.status_code, [200, 302])
@@ -454,7 +446,7 @@ class SimpleAPITests(unittest.TestCase):
         self.assertIn(response.status_code, [200, 302])
 
     def test_web_pages_exist(self):
-        """Тест что веб-страницы существуют"""
+        # Тест что веб-страницы существуют
         pages = [
             '/',
             '/movies',

@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, IntegerField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, NumberRange
 from flask_restful import Api, Resource, reqparse
-from models import db, User, Movie, Review, user_favorites
+from models import db, User, Movie, Review
 from config import Config
 
 app = Flask(__name__)
@@ -68,13 +68,13 @@ review_parser.add_argument('rating', type=int, required=True, help='Оценка
 # API для фильмов
 class MovieListAPI(Resource):
     def get(self):
-        """Получить список всех фильмов"""
+        # Список всех фильмов
         movies = Movie.query.all()
         return jsonify([movie.to_dict(current_user) for movie in movies])
 
     @login_required
     def post(self):
-        """Добавить новый фильм (только админ)"""
+        # Добавить новый фильм (только админ)
         if not current_user.is_admin:
             return {'error': 'Только администраторы могут добавлять фильмы'}, 403
 
@@ -96,13 +96,13 @@ class MovieListAPI(Resource):
 
 class MovieAPI(Resource):
     def get(self, movie_id):
-        """Получить информацию о фильме по ID"""
+        # Информацию о фильме по ID
         movie = Movie.query.get_or_404(movie_id)
         return jsonify(movie.to_dict(current_user))
 
     @login_required
     def put(self, movie_id):
-        """Обновить информацию о фильме (только админ)"""
+        # Обновить информацию о фильме (только админ)
         if not current_user.is_admin:
             return {'error': 'Только администраторы могут редактировать фильмы'}, 403
 
@@ -120,7 +120,7 @@ class MovieAPI(Resource):
 
     @login_required
     def delete(self, movie_id):
-        """Удалить фильм (только админ)"""
+        # Удалить фильм (только админ)
         if not current_user.is_admin:
             return {'error': 'Только администраторы могут удалять фильмы'}, 403
 
@@ -133,13 +133,13 @@ class MovieAPI(Resource):
 # API для отзывов
 class ReviewListAPI(Resource):
     def get(self, movie_id):
-        """Получить все отзывы к фильму"""
+        # Получить все отзывы к фильму
         reviews = Review.query.filter_by(movie_id=movie_id).all()
         return jsonify([review.to_dict() for review in reviews])
 
     @login_required
     def post(self, movie_id):
-        """Добавить отзыв к фильму"""
+        # Добавить отзыв к фильму
         args = review_parser.parse_args()
 
         # Проверяем, есть ли уже отзыв от этого пользователя
@@ -171,13 +171,13 @@ class ReviewListAPI(Resource):
 
 class ReviewAPI(Resource):
     def get(self, review_id):
-        """Получить отзыв по ID"""
+        # Получить отзыв по ID
         review = Review.query.get_or_404(review_id)
         return jsonify(review.to_dict())
 
     @login_required
     def delete(self, review_id):
-        """Удалить отзыв (только автор или админ)"""
+        # Удалить отзыв (только автор или админ)
         review = Review.query.get_or_404(review_id)
 
         if review.user_id != current_user.id and not current_user.is_admin:
@@ -199,7 +199,7 @@ class ReviewAPI(Resource):
 class UserListAPI(Resource):
     @login_required
     def get(self):
-        """Получить список пользователей (только админ)"""
+        # Получить список пользователей (только админ)
         if not current_user.is_admin:
             return {'error': 'Только администраторы могут просматривать список пользователей'}, 403
 
@@ -210,7 +210,7 @@ class UserListAPI(Resource):
 class UserAPI(Resource):
     @login_required
     def get(self, user_id):
-        """Получить информацию о пользователе"""
+        # Получить информацию о пользователе
         if current_user.id != user_id and not current_user.is_admin:
             return {'error': 'Доступ запрещен'}, 403
 
@@ -222,7 +222,7 @@ class UserAPI(Resource):
 class FavoriteAPI(Resource):
     @login_required
     def post(self, movie_id):
-        """Добавить фильм в избранное"""
+        # Добавить фильм в избранное
         movie = Movie.query.get_or_404(movie_id)
 
         if current_user.is_favorite(movie):
@@ -239,7 +239,7 @@ class FavoriteAPI(Resource):
 
     @login_required
     def delete(self, movie_id):
-        """Удалить фильм из избранного"""
+        # Удалить фильм из избранного
         movie = Movie.query.get_or_404(movie_id)
 
         if not current_user.is_favorite(movie):
@@ -256,7 +256,7 @@ class FavoriteAPI(Resource):
 
     @login_required
     def get(self, movie_id):
-        """Проверить, в избранном ли фильм"""
+        # Проверить, в избранном ли фильм
         movie = Movie.query.get_or_404(movie_id)
         is_favorite = current_user.is_favorite(movie)
 
@@ -269,7 +269,7 @@ class FavoriteAPI(Resource):
 class FavoriteListAPI(Resource):
     @login_required
     def get(self):
-        """Получить список избранных фильмов пользователя"""
+        # Получить список избранных фильмов пользователя
         favorites = current_user.favorite_movies.all()
         return jsonify([movie.to_dict(current_user) for movie in favorites])
 
@@ -293,7 +293,7 @@ def load_user(user_id):
 
 
 def init_db():
-    """Инициализация базы данных"""
+    # Инициализация базы данных
     with app.app_context():
         db.create_all()
         # Создаем тестовые данные если база пустая
@@ -310,7 +310,6 @@ def init_db():
 
             # Добавляем БОЛЬШЕ крутых фильмов!
             movies = [
-                # Классика мирового кино
                 Movie(title='Интерстеллар', year=2014, director='Кристофер Нолан',
                       genre='Фантастика, Драма',
                       description='Фантастический эпос о космических путешествиях, поиске нового дома для человечества и силе любви.'),
@@ -347,7 +346,6 @@ def init_db():
                       genre='Драма, Триллер',
                       description='История офисного работника, который встречает загадочного торговца мылом и создает подпольный бойцовский клуб.'),
 
-                # Современные хиты
                 Movie(title='Джентльмены', year=2019, director='Гай Ричи',
                       genre='Криминал, Комедия',
                       description='Американский наркобарон пытается продать свой бизнес лондонскому олигарху.'),
@@ -368,7 +366,6 @@ def init_db():
                       genre='Драма, Криминал',
                       description='История превращения неудачливого комика в психопата-преступника.'),
 
-                # Российское кино
                 Movie(title='Брат', year=1997, director='Алексей Балабанов',
                       genre='Криминал, Драма',
                       description='Демобилизованный солдат Данила Багров становится наемным убийцей в Петербурге.'),
@@ -381,7 +378,6 @@ def init_db():
                       genre='Драма, Спорт',
                       description='История победы сборной СССР по баскетболу над американцами на Олимпиаде-1972.'),
 
-                # Популярные сериалы (как фильмы)
                 Movie(title='Игра престолов (сериал)', year=2011, director='Дэвид Бениофф, Д.Б. Уайсс',
                       genre='Фэнтези, Драма',
                       description='Борьба за Железный Трон в вымышленном мире Вестероса.'),
@@ -390,7 +386,6 @@ def init_db():
                       genre='Криминал, Драма',
                       description='Школьный учитель химии становится наркобароном после того, как узнает, что болен раком.'),
 
-                # Комедии
                 Movie(title='Иван Васильевич меняет профессию', year=1973, director='Леонид Гайдай',
                       genre='Комедия, Фантастика',
                       description='Изобретатель Шурик создает машину времени и случайно отправляет управдома в прошлое.'),
@@ -399,7 +394,6 @@ def init_db():
                       genre='Комедия, Семейный',
                       description='8-летний Кевин остался один дома и защищает свой дом от грабителей.'),
 
-                # Аниме
                 Movie(title='Унесенные призраками', year=2001, director='Хаяо Миядзаки',
                       genre='Аниме, Фэнтези',
                       description='Девочка Тихиро попадает в мир духов и пытается спасти своих родителей.'),
@@ -408,7 +402,6 @@ def init_db():
                       genre='Аниме, Мелодрама',
                       description='Парень и девушка из разных городов обнаруживают, что меняются телами во сне.'),
 
-                # Научная фантастика
                 Movie(title='Матрица', year=1999, director='Братья Вачовски',
                       genre='Фантастика, Боевик',
                       description='Хакер по имени Нео узнает, что мир, в котором он живет - это компьютерная симуляция.'),
@@ -417,7 +410,6 @@ def init_db():
                       genre='Фантастика, Драма',
                       description='Охотник на андроидов раскрывает секрет, способный разрушить общество.'),
 
-                # Ужасы
                 Movie(title='Сияние', year=1980, director='Стэнли Кубрик',
                       genre='Ужасы, Драма',
                       description='Писатель с семьей поселяется в отеле, где на него воздействуют злые силы.'),
@@ -426,7 +418,6 @@ def init_db():
                       genre='Ужасы',
                       description='Группа детей из городка Дерри сталкивается со злобным клоуном Пеннивайзом.'),
 
-                # Драмы
                 Movie(title='Зеленая книга', year=2018, director='Питер Фаррелли',
                       genre='Драма, Комедия',
                       description='Путешествие афроамериканского пианиста и его итальянского водителя по югу США в 1960-х.'),
@@ -470,7 +461,7 @@ def init_db():
 # Веб-маршруты
 @app.route('/')
 def index():
-    """Главная страница"""
+    # Главная страница
     # Показываем топ фильмов и новые фильмы
     top_movies = Movie.query.order_by(Movie.rating.desc()).limit(6).all()
     new_movies = Movie.query.order_by(Movie.created_at.desc()).limit(6).all()
@@ -493,7 +484,7 @@ def index():
 
 @app.route('/movies')
 def movie_list():
-    """Список всех фильмов"""
+    # Список всех фильмов
     page = request.args.get('page', 1, type=int)
     genre_filter = request.args.get('genre')
     search_query = request.args.get('search')
@@ -517,7 +508,7 @@ def movie_list():
 
 @app.route('/movie/<int:movie_id>', methods=['GET', 'POST'])
 def movie_detail(movie_id):
-    """Страница фильма - доступна ВСЕМ пользователям"""
+    # Страница фильма - доступна ВСЕМ пользователям
     movie = Movie.query.get_or_404(movie_id)
 
     # Отзывы видят ВСЕ
@@ -562,7 +553,7 @@ def movie_detail(movie_id):
 @app.route('/movie/<int:movie_id>/favorite', methods=['POST'])
 @login_required
 def toggle_favorite(movie_id):
-    """Добавить/удалить фильм из избранного"""
+    # Добавить/удалить фильм из избранного
     # Эта декоратор @login_required уже проверяет авторизацию
 
     movie = Movie.query.get_or_404(movie_id)
@@ -598,7 +589,7 @@ def toggle_favorite(movie_id):
 @app.route('/favorites')
 @login_required
 def favorites():
-    """Страница избранных фильмов"""
+    # траница избранных фильмов
     page = request.args.get('page', 1, type=int)
     favorite_movies = current_user.favorite_movies.paginate(page=page, per_page=12)
 
@@ -608,7 +599,7 @@ def favorites():
 @app.route('/movie/add', methods=['GET', 'POST'])
 @login_required
 def add_movie():
-    """Добавление фильма"""
+    # Добавление фильма
     if not current_user.is_admin:
         abort(403)
 
@@ -632,7 +623,7 @@ def add_movie():
 @app.route('/movie/<int:movie_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_movie(movie_id):
-    """Редактирование фильма"""
+    # Редактирование фильма
     if not current_user.is_admin:
         abort(403)
 
@@ -656,7 +647,7 @@ def edit_movie(movie_id):
 @app.route('/movie/<int:movie_id>/delete', methods=['POST'])
 @login_required
 def delete_movie(movie_id):
-    """Удаление фильма"""
+    # Удаление фильма
     if not current_user.is_admin:
         abort(403)
 
@@ -669,7 +660,7 @@ def delete_movie(movie_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Вход"""
+    # Вход
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
@@ -687,7 +678,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """Регистрация"""
+    # Регистрация
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
@@ -712,7 +703,7 @@ def register():
 @app.route('/logout')
 @login_required
 def logout():
-    """Выход"""
+    # Выход
     logout_user()
     flash('Вы вышли из системы.', 'info')
     return redirect(url_for('index'))
@@ -721,7 +712,7 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    """Профиль пользователя"""
+    # Профиль пользователя
     reviews = Review.query.filter_by(user_id=current_user.id).order_by(Review.created_at.desc()).limit(10).all()
     favorite_count = current_user.favorite_movies.count()
 
@@ -733,7 +724,7 @@ def profile():
 @app.route('/reinit-db')
 @login_required
 def reinit_db_route():
-    """Пересоздание базы данных (только админ)"""
+    # Пересоздание базы данных (только админ)
     if not current_user.is_admin:
         abort(403)
 
@@ -751,7 +742,7 @@ def reinit_db_route():
 @app.route('/admin/users')
 @login_required
 def admin_users():
-    """Страница управления пользователями (только для админов)"""
+    # Страница управления пользователями (только для админов)
     if not current_user.is_admin:
         abort(403)
 
@@ -771,7 +762,7 @@ def admin_users():
 @app.route('/admin/user/<int:user_id>/make_admin', methods=['POST'])
 @login_required
 def make_admin(user_id):
-    """Сделать пользователя администратором"""
+    # Сделать пользователя администратором
     if not current_user.is_admin:
         abort(403)
 
@@ -792,7 +783,7 @@ def make_admin(user_id):
 @app.route('/admin/user/<int:user_id>/remove_admin', methods=['POST'])
 @login_required
 def remove_admin(user_id):
-    """Убрать права администратора"""
+    # Убрать права администратора
     if not current_user.is_admin:
         abort(403)
 
