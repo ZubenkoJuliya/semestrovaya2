@@ -34,6 +34,8 @@ python app.py
 movie_app/
 │
 ├── app.py                      # Основное приложение (все маршруты)
+├── init_db.py                  # Заполнение таблиц данными
+├── rest_api.py                 # Работа с REST-API
 ├── models.py                   # Модели: User, Movie, Review, связи
 ├── config.py                   # Конфигурация приложения
 ├── requirements.txt            # Зависимости: Flask, SQLAlchemy и др.
