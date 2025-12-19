@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Кинотеатр{% endblock %}</title>
+    <title>{% block title %}MovieBase{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <nav class="navbar">
     <div class="container">
-        <a class="logo" href="{{ url_for('index') }}">🎬 Кинотеатр</a>
+        <a class="logo" href="{{ url_for('index') }}">🎬 MovieBase</a>
         <div class="nav-links">
             <a href="{{ url_for('index') }}">Главная</a>
             <a href="{{ url_for('movie_list') }}">Фильмы</a>
@@ -48,7 +48,7 @@
 
 <footer>
     <div class="container">
-        <p>© 2025 Кинотеатр. Все права защищены.</p>
+        <p>© 2025 Кинотека. Все права защищены.</p>
         <p>API доступно по адресу: <code>/api/v1/</code></p>
     </div>
 </footer>
